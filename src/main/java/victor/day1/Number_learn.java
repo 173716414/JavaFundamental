@@ -1,6 +1,10 @@
 package victor.day1;
 
+import javax.sound.midi.Soundbank;
+
 public class Number_learn {
+    Number num = 3.9;
+
     public static void main(String[] args) {
         double number = -5.5;
         double absoluteValue = Math.abs(number);
@@ -44,5 +48,9 @@ public class Number_learn {
         System.out.println("long 值：" + longValue);
         System.out.println("float 值：" + floatValue);
         System.out.println("double 值：" + doubleValue);
+
+
+
+
     }
 }
