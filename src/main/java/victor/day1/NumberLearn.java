@@ -1,8 +1,6 @@
 package victor.day1;
 
-import javax.sound.midi.Soundbank;
-
-public class Number_learn {
+public class NumberLearn {
     Number num = 3.9;
 
     public static void main(String[] args) {
@@ -50,7 +48,6 @@ public class Number_learn {
         System.out.println("double 值：" + doubleValue);
 
 
-
-
+        // Deque
     }
 }
