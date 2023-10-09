@@ -114,17 +114,94 @@ arrayRefVar = new dataType[arraySize];
 上面的语法语句做了两件事：
 
 - 一、使用 dataType[arraySize] 创建了一个数组。
-- 二、把新创建的数组的引用赋值给变量 arrayRefVar。
+- 二、把新创建的数组的**引用**赋值给变量 arrayRefVar。
 
 ```java
 dataType[] arrayRefVar = new dataType[arraySize];
-
+//完成初始化并赋值
 dataType[] arrayRefVar = {value0, value1, ..., valuek};
 
 //如果返回空数组
 dataType[] arrayRefVar = new dataType[0];
 
-//完成初始化并赋值
-dataType[] arrayRefVar = new dataType[arraySize]{value0, value1, ..., valuek};
+```
+
+## For-Each 循环
+
+JDK 1.5 引进了一种新的循环类型，被称为 For-Each 循环或者加强型循环，它能在不使用下标的情况下遍历数组。
+
+语法格式如下：
+
+```java
+for(type element: array)
+{
+    System.out.println(element);
+}
+```
+
+### 多维数组的动态初始化（以二维数组为例）
+
+1. 直接为每一维分配空间，格式如下：
+
+```java
+type[][] typeName = new type[typeLength1][typeLength2];
+```
+
+type 可以为基本数据类型和复合数据类型，typeLength1 和 typeLength2 必须为正整数，typeLength1 为行数，typeLength2 为列数。
+
+```java
+int[][] a = new int[2][3];
+```
+
+二维数组for-each
+
+```java
+int[][] data = new int[2][3];
+for (int[] da : data) {
+    for (int d : da) {
+        sout(d);
+    }
+}
+```
+
+## Day3.3
+
+日期：在算法题中不多
+        
+
+```java
+import java.util.Date;
+  
+public class DateDemo {
+   public static void main(String[] args) {
+       // 初始化 Date 对象
+       Date date = new Date();
+        
+       // 使用 toString() 函数显示日期时间
+       System.out.println(date.toString());
+   }
+}
+```
+## 日期比较
+
+Java使用以下三种方法来比较两个日期：
+
+- 使用 getTime() 方法获取两个日期（自1970年1月1日经历的毫秒数值），然后比较这两个值。
+- 使用方法 before()，after() 和 equals()。例如，一个月的12号比18号早，则 new Date(99, 2, 12).before(new Date (99, 2, 18)) 返回true。
+- 使用 compareTo() 方法，它是由 Comparable 接口定义的，Date 类实现了这个接口。
+
+```java
+import  java.util.*;
+import java.text.*;
+ 
+public class DateDemo {
+   public static void main(String[] args) {
+ 
+      Date dNow = new Date( );
+      SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd hh:mm:ss");
+ 
+      System.out.println("当前时间为: " + ft.format(dNow));
+   }
+}
 ```
 
