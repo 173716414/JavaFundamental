@@ -205,3 +205,116 @@ public class DateDemo {
 }
 ```
 
+#### 格式化输出
+
+```java
+import java.util.Date;
+public class DateFormatExample {
+   public static void main(String[] args) {
+      Date date = new Date();
+      System.out.printf("%tY-%tm-%td %tH:%tM:%tS %tZ", date, date, date, date, date, date);
+   }
+}
+```
+
+#### 解析字符串为时间
+
+SimpleDateFormat 类有一些附加的方法，特别是parse()，它试图按照给定的SimpleDateFormat 对象的格式化存储来解析字符串。例如：
+
+```java
+import java.util.*;
+import java.text.*;
+  
+public class DateDemo {
+ 
+   public static void main(String[] args) {
+      SimpleDateFormat ft = new SimpleDateFormat ("yyyy-MM-dd"); 
+ 
+      String input = args.length == 0 ? "1818-11-11" : args[0]; 
+ 
+      System.out.print(input + " Parses as "); 
+ 
+      Date t; 
+ 
+      try { 
+          t = ft.parse(input); 
+          System.out.println(t); 
+      } catch (ParseException e) { 
+          System.out.println("Unparseable using " + ft); 
+      }
+   }
+}
+```
+
+测量时间间隔
+
+```java
+import java.util.*;
+  
+public class DiffDemo {
+ 
+   public static void main(String[] args) {
+      try {
+         long start = System.currentTimeMillis( );
+         System.out.println(new Date( ) + "\n");
+         Thread.sleep(5*60*10);
+         System.out.println(new Date( ) + "\n");
+         long end = System.currentTimeMillis( );
+         long diff = end - start;
+         System.out.println("Difference is : " + diff);
+      } catch (Exception e) {
+         System.out.println("Got an exception!");
+      }
+   }
+}
+```
+
+注意使用long来接收返回值，currentTimeMillis()返回时间毫秒值
+
+## Calendar类
+
+我们现在已经能够格式化并创建一个日期对象了，但是我们如何才能设置和获取日期数据的特定部分呢，比如说小时，日，或者分钟? 我们又如何在日期的这些部分加上或者减去值呢? 答案是使用Calendar 类。
+
+```java
+Calendar c = Calendar.getInstance();//默认是当前日期
+
+//创建一个代表2009年1月12日的Calendar对象
+Calendar c1 = Calendar.getInstance();
+c1.set(2009, 1, 12);
+
+```
+
+set&get
+
+```java
+public static void main(String[] args) {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, 2);
+        System.out.println(c.get(Calendar.DATE));
+    }
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
