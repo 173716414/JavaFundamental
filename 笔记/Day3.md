@@ -292,27 +292,107 @@ public static void main(String[] args) {
         c.set(Calendar.DAY_OF_MONTH, 2);
         System.out.println(c.get(Calendar.DATE));
     }
+    // // 获得年份
+    // int year = c1.get(Calendar.YEAR);
+    // // 获得月份
+    // int month = c1.get(Calendar.MONTH) + 1;
+    // // 获得日期
+    // int date = c1.get(Calendar.DATE);
+    // // 获得小时
+    // int hour = c1.get(Calendar.HOUR_OF_DAY);
+    // // 获得分钟
+    // int minute = c1.get(Calendar.MINUTE);
+    // // 获得秒
+    // int second = c1.get(Calendar.SECOND);
+    // // 获得星期几（注意（这个与Date类是不同的）：1代表星期日、2代表星期1、3代表星期二，以此类推）
+    // int day = c1.get(Calendar.DAY_OF_WEEK);
 ```
 
+| 1    | void add(int field, int amount) 根据日历规则，将指定的（有符号的）时间量添加到给定的日历字段中。 |
+| ---- | ------------------------------------------------------------ |
+| 2    | **Date getTime()** 获取日历当前时间                          |
 
+### Day3.4 正则表达式
 
+java.util.regex 包主要包括以下三个类：
 
+- Pattern 类：
 
+  pattern 对象是一个正则表达式的编译表示。Pattern 类没有公共构造方法。要创建一个 Pattern 对象，你必须首先调用其公共静态编译方法，它返回一个 Pattern 对象。该方法接受一个正则表达式作为它的第一个参数。
 
+- Matcher 类：
 
+  Matcher 对象是对输入字符串进行解释和匹配操作的引擎。与Pattern 类一样，Matcher 也没有公共构造方法。你需要调用 Pattern 对象的 matcher 方法来获得一个 Matcher 对象。
 
+- PatternSyntaxException：
 
+  PatternSyntaxException 是一个非强制异常类，它表示一个正则表达式模式中的语法错误。
 
+```java
+import java.util.regex.*;
+ 
+class RegexExample1{
+   public static void main(String[] args){
+      String content = "I am noob " +
+        "from runoob.com.";
+ 
+      String pattern = ".*runoob.*";
+ 
+      boolean isMatch = Pattern.matches(pattern, content);
+      System.out.println("字符串中是否包含了 'runoob' 子字符串? " + isMatch);
+   }
+}
+```
 
+#### 捕获组
 
+捕获组是把多个字符当一个单独单元进行处理的方法，它通过对括号内的字符分组来创建。
 
+这个示例的正则表达式是 `"(\\D*)(\\d+)(.*)"`，它用于匹配包含非数字字符、数字字符和剩余字符的文本。
 
+```java
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+public class RegexMatches {
+    public static void main(String[] args) {
 
+        // 在字符串中查找匹配项的文本
+        String line = "This order was placed for QT3000! OK?";
+        String pattern = "(\\D*)(\\d+)(.*)";
 
+        // 创建 Pattern 对象，用于编译正则表达式
+        Pattern r = Pattern.compile(pattern);
 
+        // 创建 matcher 对象，用于执行匹配操作
+        Matcher m = r.matcher(line);
 
+        // 使用 find() 方法查找匹配项
+        if (m.find()) {
+            System.out.println("Found value: " + m.group(0)); // 打印整个匹配项
+            System.out.println("Found value: " + m.group(1)); // 打印第一个捕获组，即非数字字符部分
+            System.out.println("Found value: " + m.group(2)); // 打印第二个捕获组，即数字字符部分
+            System.out.println("Found value: " + m.group(3)); // 打印第三个捕获组，即剩余字符部分
+        } else {
+            System.out.println("NO MATCH");
+        }
+    }
+}
 
+```
+
+### 正则表达式语法
+
+在其他语言中，**\\** 表示：**我想要在正则表达式中插入一个普通的（字面上的）反斜杠，请不要给它任何特殊的意义。**
+
+在 Java 中，**\\** 表示：**我要插入一个正则表达式的反斜线，所以其后的字符具有特殊的意义。**
+
+所以，在其他的语言中（如 Perl），一个反斜杠\\就足以具有转义的作用，而在 Java 中正则表达式中则需要有两个反斜杠才能被解析为其他语言中的转义作用。也可以简单的理解在 Java 的正则表达式中，两个 **\\** 代表其他语言中的一个 **，这也就是为什么表示一位数字的正则表达式是 \\d**，而表示一个普通的反斜杠是 \\\\。
+
+```java
+System.out.print("\\");    // 输出为 \
+System.out.print("\\\\");  // 输出为 \\
+```
 
 
 
