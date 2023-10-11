@@ -206,3 +206,114 @@ class MyException extends Exception{
 
 - **JVM(Java虚拟机) **异常：由 JVM 抛出的异常或错误。例如：NullPointerException 类，ArrayIndexOutOfBoundsException 类，ClassCastException 类。
 - **程序级异常：**由程序或者API程序抛出的异常。例如 IllegalArgumentException 类，IllegalStateException 类。
+
+## Java 继承
+
+### 类的继承格式
+
+在 Java 中通过 extends 关键字可以申明一个类是从另外一个类继承而来的，一般形式如下：
+
+```java
+class 父类 {
+}
+ 
+class 子类 extends 父类 {
+}
+```
+
+![java-extends-2020-12-08](img/java-extends-2020-12-08.png)
+
+（此处多重继承语义不同）
+
+### 继承的特性
+
+- 子类拥有父类非 private 的属性、方法。
+- 子类可以拥有自己的属性和方法，即子类可以对父类进行扩展。
+- 子类可以用自己的方式实现父类的方法。
+
+在Java中，继承是单一继承，这意味着一个类只能直接继承自一个父类。与此不同的是，C++支持多重继承，允许一个类继承自多个父类。
+
+在Java中，每个类只能有一个直接父类，这是为了避免一些复杂的继承问题和冲突。这种单一继承的特性是Java与C++等支持多重继承的编程语言的一个区别。
+
+如果您在Java中需要实现多个父类的功能，可以使用接口来实现。Java支持多接口实现，这意味着一个类可以实现多个接口，从而获得多个不同的功能。
+
+### 继承关键字
+
+继承可以使用 extends 和 implements 这两个关键字来实现继承，而且所有的类都是继承于 java.lang.Object，当一个类没有继承的两个关键字，则默认继承 Object（这个类在 **java.lang** 包中，所以不需要 **import**）祖先类。
+
+### implements关键字
+
+使用 implements 关键字可以变相的使java具有多继承的特性，使用范围为类继承接口的情况，可以同时继承多个接口（接口跟接口之间采用逗号分隔）。
+
+```java
+public interface A {
+    public void eat();
+    public void sleep();
+}
+ 
+public interface B {
+    public void show();
+}
+ 
+public class C implements A,B {
+}
+```
+
+### super 与 this 关键字
+
+super关键字：我们可以通过super关键字来实现对父类成员的访问，用来引用当前对象的父类。
+
+this关键字：指向自己的引用。
+
+```java
+class Animal {
+  void eat() {
+    System.out.println("animal : eat");
+  }
+}
+ 
+class Dog extends Animal {
+  void eat() {
+    System.out.println("dog : eat");
+  }
+  void eatTest() {
+    this.eat();   // this 调用自己的方法
+    super.eat();  // super 调用父类方法
+  }
+}
+ 
+public class Test {
+  public static void main(String[] args) {
+    Animal a = new Animal();
+    a.eat();
+    Dog d = new Dog();
+    d.eatTest();
+  }
+}
+```
+
+### final 关键字
+
+final 可以用来修饰变量（包括类属性、对象属性、局部变量和形参）、方法（包括类方法和对象方法）和类。
+
+final 含义为 "最终的"。
+
+使用 final 关键字声明类，就是把类定义定义为最终类，不能被继承，或者用于修饰方法，该方法不能被子类重写：
+
+- 声明类：
+
+  ```java
+  final class 类名 {//类体}
+  ```
+
+- 声明方法：
+
+  ```java
+  修饰符(public/private/default/protected) final 返回值类型 方法名(){//方法体}
+  ```
+
+#### 构造器
+
+子类是不继承父类的构造器（构造方法或者构造函数）的，它只是调用（隐式或显式）。如果父类的构造器带有参数，则必须在子类的构造器中显式地通过 **super** 关键字调用父类的构造器并配以适当的参数列表。
+
+如果父类构造器没有参数，则在子类的构造器中不需要使用 **super** 关键字调用父类构造器，系统会自动调用父类的无参构造器。
