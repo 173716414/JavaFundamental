@@ -27,6 +27,7 @@ public class DirList {
             }
         } else {
             System.out.println(dirname + " 不是一个目录");
+            // Exception
         }
     }
 }
