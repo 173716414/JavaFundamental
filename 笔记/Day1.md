@@ -55,21 +55,21 @@
    - **valueOf() 方法**：这个方法用于返回一个 `Number` 对象，该对象包含指定的内置数据类型的值。它可以用于将原始数据类型转换为 `Number` 对象。
 
      ```java
-     javaCopy codeint intValue = 42;
+     int intValue = 42;
      Number num = Number.valueOf(intValue); // 返回一个包含 int 值的 Number 对象
      ```
 
    - **toString() 方法**：这个方法用于以字符串形式返回 `Number` 对象的值。
 
      ```java
-     javaCopy codeNumber num = 42.5;
+     Number num = 42.5;
      String numStr = num.toString(); // 返回字符串 "42.5"
      ```
 
    - **parseInt() 方法**：`parseInt()` 不是 `Number` 类的方法，它是 `Integer` 类的一个静态方法，用于将字符串解析为 `int` 类型的值。
 
      ```java
-     javaCopy codeString numStr = "42";
+     String numStr = "42";
      int intValue = Integer.parseInt(numStr); // 将字符串解析为 int 值
      ```
 
@@ -96,12 +96,6 @@
    10. **`pow()`**：返回第一个参数的第二个参数次方。
 
    11. **`sqrt()`**：求参数的算术平方根。
-
-       public class MathExamples {
-           public static void main(String[] args) {
-               // abs() - 返回参数的绝对值
-               double absoluteValue = Math.abs(-42.5);
-               System.out.println("Absolute Value: " + absoluteValue);
 
        ```java
        public class MathExamples {
@@ -171,7 +165,7 @@
    示例：
 
    ```java
-   javaCopy codeInteger num1 = 42;
+   Integer num1 = 42;
    Integer num2 = 30;
    int result = num1.compareTo(num2);
    ```
@@ -185,7 +179,7 @@
    示例：
 
    ```java
-   javaCopy codeString str1 = "Hello";
+   String str1 = "Hello";
    String str2 = "Hello";
    boolean isEqual = str1.equals(str2); // 返回 true，因为两个字符串内容相等
    ```
