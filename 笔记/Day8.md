@@ -138,3 +138,52 @@ public class Boss
 }
 ```
 
+如果 Boss 类不在 payroll 包中又会怎样？Boss 类必须使用下面几种方法之一来引用其他包中的类。
+
+使用类全名描述，例如：
+
+```java
+payroll.Employee
+```
+
+用 **import** 关键字引入，使用通配符 *****：
+
+```java
+import payroll.*;
+```
+
+使用 **import** 关键字引入 Employee 类：
+
+```java
+import payroll.Employee;
+```
+
+**注意：**
+
+类文件中可以包含任意数量的 import 声明。import 声明必须在包声明之后，类声明之前。
+
+```java
+// 文件名 :  Car.java
+ 
+package vehicle;
+ 
+public class Car {
+   // 类实现  
+}
+```
+
+接下来，把源文件放在一个目录中，这个目录要对应类所在包的名字。
+
+```bash
+....\vehicle\Car.java
+```
+
+通常，一个公司使用它互联网域名的颠倒形式来作为它的包名.例如：互联网域名是 runoob.com，所有的包名都以 com.runoob 开头。包名中的每一个部分对应一个子目录。
+
+例如：有一个 **com.runoob.test** 的包，这个包包含一个叫做 Runoob.java 的源文件，那么相应的，应该有如下面的一连串子目录：
+
+```java
+....\com\runoob\test\Runoob.java
+```
+
+JAR 文件按包含 Java 平台相关的类，所以他们的目录默认放在了 class path 中。
