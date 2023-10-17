@@ -1,5 +1,7 @@
 package victor.day1;
 
+import java.util.AbstractCollection;
+
 public class NumberLearn {
     Number num = 3.9;
 
