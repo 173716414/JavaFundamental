@@ -451,3 +451,13 @@ Java集合框架为程序员提供了预先包装的数据结构和算法来操�
 任何对象加入集合类后，自动转变为Object类型，所以在取出的时候，需要进行强制类型转换。
 
 在Java中，集合类（例如`ArrayList`、`List`, `Set`, `Map` 等）是泛型的，这意味着您可以指定集合存储的元素类型。当您添加对象到一个泛型集合时，这些对象的类型信息会被保留，并不会自动转变为 `Object` 类型。因此，取出元素时通常不需要进行强制类型转换，因为编译器会确保类型安全。
+
+```java
+List<String> stringList = new ArrayList<>();
+stringList.add("Hello");
+stringList.add("World");
+
+String firstElement = stringList.get(0); // 不需要强制类型转换
+String secondElement = stringList.get(1); // 不需要强制类型转换
+```
+
