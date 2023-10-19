@@ -198,3 +198,64 @@ System.out.println(sites);
 | 构造器      | 描述                                                         |
 | :---------- | :----------------------------------------------------------- |
 | `HashSet()` | 构造一个新的空集; 支持`HashMap`实例具有默认初始容量（16）和加载因子（0.75）。 |
+
+| 变量和类型    | 方法                 | 描述                                             |
+| :------------ | :------------------- | :----------------------------------------------- |
+| `boolean`     | `add(E e)`           | 如果指定的元素尚不存在，则将其添加到此集合中。   |
+| `void`        | `clear()`            | 从该集中删除所有元素。                           |
+| `Object`      | `clone()`            | 返回此 `HashSet`实例的浅表副本：未克隆元素本身。 |
+| `boolean`     | `contains(Object o)` | 如果此set包含指定的元素，则返回 `true` 。        |
+| `boolean`     | `isEmpty()`          | 如果此集合不包含任何元素，则返回 `true` 。       |
+| `Iterator<E>` | `iterator()`         | 返回此set中元素的迭代器。                        |
+| `boolean`     | `remove(Object o)`   | 如果存在，则从该集合中移除指定的元素。           |
+| `int`         | `size()`             | 返回此集合中的元素数（基数）                     |
+
+### 附录
+
+栈实现（利用deque）
+
+![deque栈](img/deque栈.png)
+
+队列实现（利用deque）
+
+![deque队列](img/deque队列.png)
+
+上面两个表共定义了Deque的12个接口。添加，删除，取值都有两套接口，它们功能相同，区别是对失败情况的处理不同。一套接口遇到失败就会抛出异常，另一套遇到失败会返回特殊值（false或null）。除非某种实现对容量有限制，大多数情况下，添加操作是不会失败的。虽然Deque的接口有12个之多，但无非就是对容器的两端进行操作，或添加，或删除，或查看。
+**ArrayDeque和LinkedList是Deque的实现子类，他们都能使用Deque的这12个方法，包括isEmpty()判断是否为空方法和size()栈和队列的大小**
+
+ArrayDeque
+当需要使用栈和队列是官方推荐的是ArrayDeque（但我刷题的时候感觉LinkedList也很常用，甚至可能用的更多一点）
+
+从名字可以看出ArrayDeque底层通过数组实现，为了满足可以同时在数组两端插入或删除元素的需求，该数组还必须是循环的，即循环数组（circular array），也就是说数组的任何一点都可能被看作起点或者终点。ArrayDeque是**非线程安全的**（not thread-safe），当多个线程同时使用的时候，需要程序员手动同步；**另外，该容器不允许放入null元素。**
+
+
+以下LinkedList实现栈和队列的等价方法与ArrayDeque相同
+
+LinkedList
+LinkedList实现了Deque接口,因此其具备双端队列的特性,由于其是链表结构,，双向链表，因此不像ArrayDeque要考虑越界问题,容量问题,那么对应操作就很简单了（另外当需要使用栈和队列是官方推荐的是ArrayDeque）
+
+LinkedList作为LIFO（后进先出）的栈时，下表的方法等价：
+
+```bash
+栈方法        等效方法
+push(e)      addFirst(e)
+pop()        removeFirst()
+peek()       peekFirst()
+
+注：同时LinkedList本身也有push(e)，pop()，peek() 方法，功能一致
+
+	Deque<Integer> stack = new LinkedList<Integer>();
+	这种情况下别忘了标明泛型
+```
+
+LinkedList作为FIFO(先进先出)的队列时，下表的方法等价：
+
+```bash
+队列方法       等效方法
+add(e)        addLast(e)
+remove()      removeFirst()
+element()     getFirst()
+
+注：同时LinkedList本身也有add(e)，remove()方法，功能一致
+```
+
