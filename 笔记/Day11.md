@@ -111,7 +111,7 @@ for (String i : sites) {
 | public E **remove(int index)**                 | 删除指定位置的元素。                                         |
 | public E **poll()**                            | 删除并返回第一个元素。                                       |
 | public E remove()                              | 删除并返回第一个元素。                                       |
-| public boolean c**ontains(Object o)**          | 判断是否含有某一元素。                                       |
+| public boolean **contains(Object o)**          | 判断是否含有某一元素。                                       |
 | public E **get(int index)**                    | 返回指定位置的元素。                                         |
 | public E getFirst()                            | 返回第一个元素。                                             |
 | public E getLast()                             | 返回最后一个元素。                                           |
@@ -128,3 +128,73 @@ for (String i : sites) {
 | public ListIterator listIterator(int index)    | 返回从指定位置开始到末尾的迭代器。                           |
 | public Object[] toArray()                      | 返回一个由链表元素组成的数组。                               |
 | public T[] toArray(T[] a)                      | 返回一个由链表元素转换类型而成的数组。                       |
+
+
+
+## Java HashSet
+
+HashSet 基于 HashMap 来实现的，是一个不允许有重复元素的集合。
+
+HashSet 允许有 null 值。
+
+HashSet 是无序的，即不会记录插入的顺序。
+
+HashSet **不是线程安全的**， 如果多个线程尝试同时修改 HashSet，则最终结果是不确定的。 您必须在多线程访问时显式同步对 HashSet 的并发访问。
+
+HashSet 实现了 Set 接口。
+
+![java-hashset-hierarchy](img/java-hashset-hierarchy.png)
+
+```java
+import java.util.HashSet; // 引入 HashSet 类
+HashSet<String> sites = new HashSet<String>();
+```
+
+### 添加元素
+
+HashSet 类提供了很多有用的方法，添加元素可以使用 add() 方法:
+
+```java
+sites.add("Runoob");  // 重复的元素不会被添加
+```
+
+### 判断元素是否存在
+
+我们可以使用 contains() 方法来判断元素是否存在于集合当中:
+
+```java
+System.out.println(sites.contains("Taobao"));
+```
+
+### 删除元素
+
+我们可以使用 remove() 方法来删除集合中的元素:
+
+```java
+sites.remove("Taobao");  // 删除元素，删除成功返回 true，否则为 false
+System.out.println(sites);
+```
+
+删除集合中所有元素可以使用 clear 方法
+
+### 计算大小
+
+如果要计算 HashSet 中的元素数量可以使用 size() 方法
+
+### 迭代 HashSet
+
+可以使用 for-each 来迭代 HashSet 中的元素。
+
+### 附录
+
+加载因子（Load Factor）是与哈希表（Hash Table）相关的一个概念，通常用于调整哈希表的性能和内存消耗之间的平衡。
+
+加载因子 = 已使用存储桶数 / 总存储桶数
+
+通常，哈希表的实现会在加载因子达到一定阈值时自动进行扩容，以减少冲突并维持性能。扩容通常会导致存储桶数翻倍，同时重新散列存储桶中的元素。这个过程在时间和内存消耗方面都有开销，因此合适的加载因子选择对于维护哈希表的性能至关重要。
+
+通常，加载因子的典型值是0.7或0.75，但实际选择可能因具体应用和性能需求而有所不同。如果你需要更高的内存利用率，可以选择较高的加载因子，但需要牺牲一些性能。如果性能是首要考虑因素，可以选择较低的加载因子。
+
+| 构造器      | 描述                                                         |
+| :---------- | :----------------------------------------------------------- |
+| `HashSet()` | 构造一个新的空集; 支持`HashMap`实例具有默认初始容量（16）和加载因子（0.75）。 |
