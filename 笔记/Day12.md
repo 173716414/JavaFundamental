@@ -160,3 +160,143 @@ public static void getUperNumber(List<? extends Number> data) {
 ```
 
 3、类型通配符下限通过形如 **List<? super Number>** 来定义，表示类型只能接受 **Number** 及其上层父类类型，如 **Object** 类型的实例。
+
+### Java 序列化
+
+Java 序列化是一种将对象转换为字节流的过程，以便可以将对象保存到磁盘上，将其传输到网络上，或者将其存储在内存中，以后再进行反序列化，将字节流重新转换为对象。
+
+序列化在 Java 中是通过 **java.io.Serializable** 接口来实现的，该接口没有任何方法，只是一个标记接口，用于标识类可以被序列化。
+
+```java
+import java.io.Serializable;
+
+public class MyClass implements Serializable {
+    // 类的成员和方法
+}
+```
+
+**序列化对象：** 使用 ObjectOutputStream 类来将对象序列化为字节流，以下是一个简单的实例：
+
+```java
+MyClass obj = new MyClass();
+try {
+    FileOutputStream fileOut = new FileOutputStream("object.ser");
+    ObjectOutputStream out = new ObjectOutputStream(fileOut);
+    out.writeObject(obj);
+    out.close();
+    fileOut.close();
+} catch (IOException e) {
+    e.printStackTrace();
+}
+```
+
+**反序列化对象：** 使用 ObjectInputStream 类来从字节流中反序列化对象，以下是一个简单的实例：
+
+```java
+MyClass obj = null;
+try {
+    FileInputStream fileIn = new FileInputStream("object.ser");
+    ObjectInputStream in = new ObjectInputStream(fileIn);
+    obj = (MyClass) in.readObject();
+    in.close();
+    fileIn.close();
+} catch (IOException e) {
+    e.printStackTrace();
+} catch (ClassNotFoundException e) {
+    e.printStackTrace();
+}
+```
+
+请注意，一个类的对象要想序列化成功，必须满足两个条件：
+
+该类必须实现 java.io.Serializable 接口。
+
+该类的所有属性必须是可序列化的。如果有一个属性不是可序列化的，则该属性必须注明是短暂的。
+
+```java
+public class Employee implements java.io.Serializable
+{
+   public String name;
+   public String address;
+   public transient int SSN;
+   public int number;
+   public void mailCheck()
+   {
+      System.out.println("Mailing a check to " + name
+                           + " " + address);
+   }
+}
+```
+
+**注意：** 当序列化一个对象到文件时， 按照 Java 的标准约定是给文件一个 .ser 扩展名。
+
+```java
+import java.io.*;
+ 
+public class SerializeDemo
+{
+   public static void main(String [] args)
+   {
+      Employee e = new Employee();
+      e.name = "Reyan Ali";
+      e.address = "Phokka Kuan, Ambehta Peer";
+      e.SSN = 11122333;
+      e.number = 101;
+      try
+      {
+         FileOutputStream fileOut =
+         new FileOutputStream("/tmp/employee.ser");
+         ObjectOutputStream out = new ObjectOutputStream(fileOut);
+         out.writeObject(e);
+         out.close();
+         fileOut.close();
+         System.out.printf("Serialized data is saved in /tmp/employee.ser");
+      }catch(IOException i)
+      {
+          i.printStackTrace();
+      }
+   }
+}
+```
+
+```java
+import java.io.*;
+ 
+public class DeserializeDemo
+{
+   public static void main(String [] args)
+   {
+      Employee e = null;
+      try
+      {
+         FileInputStream fileIn = new FileInputStream("/tmp/employee.ser");
+         ObjectInputStream in = new ObjectInputStream(fileIn);
+         e = (Employee) in.readObject();
+         in.close();
+         fileIn.close();
+      }catch(IOException i)
+      {
+         i.printStackTrace();
+         return;
+      }catch(ClassNotFoundException c)
+      {
+         System.out.println("Employee class not found");
+         c.printStackTrace();
+         return;
+      }
+      System.out.println("Deserialized Employee...");
+      System.out.println("Name: " + e.name);
+      System.out.println("Address: " + e.address);
+      System.out.println("SSN: " + e.SSN);
+      System.out.println("Number: " + e.number);
+    }
+}
+```
+
+这里要注意以下要点：
+
+readObject() 方法中的 try/catch代码块尝试捕获 ClassNotFoundException 异常。对于 JVM 可以反序列化对象，它必须是能够找到字节码的类。如果JVM在反序列化对象的过程中找不到该类，则抛出一个 ClassNotFoundException 异常。
+
+注意，readObject() 方法的返回值被转化成 Employee 引用。
+
+当对象被序列化时，属性 SSN 的值为 111222333，但是因为该属性是短暂的，该值没有被发送到输出流。所以反序列化后 Employee 对象的 SSN 属性为 0。
