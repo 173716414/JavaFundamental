@@ -78,3 +78,141 @@ Java 线程的优先级是一个整数，其取值范围是 1 （Thread.MIN_PRIO
 默认情况下，每一个线程都会分配一个优先级 NORM_PRIORITY（5）。
 
 具有较高优先级的线程对程序更重要，并且应该在低优先级的线程之前分配处理器资源。但是，线程优先级不能保证线程执行的顺序，而且非常依赖于平台。
+
+### 创建一个线程
+
+Java 提供了三种创建线程的方法：
+
+- 通过实现 Runnable 接口；
+- 通过继承 Thread 类本身；
+- 通过 Callable 和 Future 创建线程。
+
+### 通过实现 Runnable 接口来创建线程
+
+创建一个线程，最简单的方法是创建一个实现 Runnable 接口的类。
+
+为了实现 Runnable，一个类只需要执行一个方法调用 run()，声明如下：
+
+```java
+public void run()
+```
+
+你可以重写该方法，重要的是理解的 run() 可以调用其他方法，使用其他类，并声明变量，就像主线程一样。
+
+在创建一个实现 Runnable 接口的类之后，你可以在类中实例化一个线程对象。
+
+Thread 定义了几个构造方法，下面的这个是我们经常使用的：
+
+```java
+Thread(Runnable threadOb,String threadName);
+```
+
+这里，threadOb 是一个实现 Runnable 接口的类的实例，并且 threadName 指定新线程的名字。
+
+新线程创建之后，你调用它的 start() 方法它才会运行。
+
+```java
+void start();
+```
+
+```java
+class RunnableDemo implements Runnable {
+   private Thread t;
+   private String threadName;
+   
+   RunnableDemo( String name) {
+      threadName = name;
+      System.out.println("Creating " +  threadName );
+   }
+   
+   public void run() {
+      System.out.println("Running " +  threadName );
+      try {
+         for(int i = 4; i > 0; i--) {
+            System.out.println("Thread: " + threadName + ", " + i);
+            // 让线程睡眠一会
+            Thread.sleep(50);
+         }
+      }catch (InterruptedException e) {
+         System.out.println("Thread " +  threadName + " interrupted.");
+      }
+      System.out.println("Thread " +  threadName + " exiting.");
+   }
+   
+   public void start () {
+      System.out.println("Starting " +  threadName );
+      if (t == null) {
+         t = new Thread (this, threadName);
+         t.start ();
+      }
+   }
+}
+ 
+public class TestThread {
+ 
+   public static void main(String args[]) {
+      RunnableDemo R1 = new RunnableDemo( "Thread-1");
+      R1.start();
+      
+      RunnableDemo R2 = new RunnableDemo( "Thread-2");
+      R2.start();
+   }   
+}
+```
+
+```bash
+Creating Thread-1
+Starting Thread-1
+Creating Thread-2
+Starting Thread-2
+Running Thread-1
+Thread: Thread-1, 4
+Running Thread-2
+Thread: Thread-2, 4
+Thread: Thread-1, 3
+Thread: Thread-2, 3
+Thread: Thread-1, 2
+Thread: Thread-2, 2
+Thread: Thread-1, 1
+Thread: Thread-2, 1
+Thread Thread-1 exiting.
+Thread Thread-2 exiting.
+```
+
+### 通过继承Thread来创建线程
+
+创建一个线程的第二种方法是创建一个新的类，该类继承 Thread 类，然后创建一个该类的实例。
+
+继承类必须重写 run() 方法，该方法是新线程的入口点。它也必须调用 start() 方法才能执行。
+
+该方法尽管被列为一种多线程实现方式，但是本质上也是实现了 Runnable 接口的一个实例。
+
+## Thread 方法
+
+下表列出了Thread类的一些重要方法：
+
+| **序号** |                         **方法描述**                         |
+| :------- | :----------------------------------------------------------: |
+| 1        | **public void start()** 使该线程开始执行；**Java** 虚拟机调用该线程的 run 方法。 |
+| 2        | **public void run()** 如果该线程是使用独立的 Runnable 运行对象构造的，则调用该 Runnable 对象的 run 方法；否则，该方法不执行任何操作并返回。 |
+| 3        | **public final void setName(String name)** 改变线程名称，使之与参数 name 相同。 |
+| 4        | **public final void setPriority(int priority)**  更改线程的优先级。 |
+| 5        | **public final void setDaemon(boolean on)** 将该线程标记为守护线程或用户线程。 |
+| 6        | **public final void join(long millisec)** 等待该线程终止的时间最长为 millis 毫秒。 |
+| 7        |            **public void interrupt()** 中断线程。            |
+| 8        | **public final boolean isAlive()** 测试线程是否处于活动状态。 |
+
+## Thread 方法
+
+下表列出了Thread类的一些重要方法：
+
+| **序号** |                         **方法描述**                         |
+| :------- | :----------------------------------------------------------: |
+| 1        | **public void start()** 使该线程开始执行；**Java** 虚拟机调用该线程的 run 方法。 |
+| 2        | **public void run()** 如果该线程是使用独立的 Runnable 运行对象构造的，则调用该 Runnable 对象的 run 方法；否则，该方法不执行任何操作并返回。 |
+| 3        | **public final void setName(String name)** 改变线程名称，使之与参数 name 相同。 |
+| 4        | **public final void setPriority(int priority)**  更改线程的优先级。 |
+| 5        | **public final void setDaemon(boolean on)** 将该线程标记为守护线程或用户线程。 |
+| 6        | **public final void join(long millisec)** 等待该线程终止的时间最长为 millis 毫秒。 |
+| 7        |            **public void interrupt()** 中断线程。            |
+| 8        | **public final boolean isAlive()** 测试线程是否处于活动状态。 |
