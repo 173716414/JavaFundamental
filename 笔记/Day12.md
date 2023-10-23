@@ -148,7 +148,7 @@ public class Box<T> {
 ```java
 public static void getData(List<?> data) {
       System.out.println("data :" + data.get(0));
-   }
+}
 ```
 
 2、类型通配符上限通过形如List来定义，如此定义就是通配符泛型值接受Number及其下层子类类型。
@@ -156,7 +156,7 @@ public static void getData(List<?> data) {
 ```java
 public static void getUperNumber(List<? extends Number> data) {
           System.out.println("data :" + data.get(0));
-       }
+}
 ```
 
 3、类型通配符下限通过形如 **List<? super Number>** 来定义，表示类型只能接受 **Number** 及其上层父类类型，如 **Object** 类型的实例。
