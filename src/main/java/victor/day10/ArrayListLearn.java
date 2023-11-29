@@ -29,7 +29,7 @@ public class ArrayListLearn {
         //         return o1.compareTo(o2) ;
         //     }
         // });
-        Collections.sort(intArray, Comparator.reverseOrder());
+        intArray.sort(Comparator.reverseOrder());
         System.out.println(intArray);
         intArray.sort(Comparator.naturalOrder());
         System.out.println(intArray);

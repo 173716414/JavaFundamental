@@ -39,7 +39,7 @@ public class StreamLearn {
 
         long count = strings
                 .stream()
-                .filter(string -> string.isEmpty())
+                .filter(String::isEmpty)
                 .count();
         System.out.println(count);
 
@@ -51,7 +51,7 @@ public class StreamLearn {
 
         count = strings
                 .parallelStream()
-                .filter(string -> string.isEmpty())
+                .filter(String::isEmpty)
                 .count();
         System.out.println(count);
 
