@@ -23,3 +23,5 @@ SpringBoot方式
 ![RequestParam](img/RequestParam.png)
 
 简单实体对象，请求参数名需要和形参对象属性参数名相同
+
+![SpringBoot参数接收1](img/SpringBoot参数接收1.png)
