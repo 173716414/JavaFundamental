@@ -33,3 +33,7 @@ Json中的Key需要加双引号
 总结
 
 ![SpringBoot参数接收总结](img/SpringBoot参数接收总结.png)
+
+### 统一响应结果
+
+![统一响应结果](img/统一响应结果.png)
