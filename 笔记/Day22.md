@@ -63,6 +63,10 @@ Thread.setPriority(int n) // 1~10, 默认值5
 
 如果线程处于等待状态，例如，`t.join()`会让`main`线程进入等待状态，此时，如果对`main`线程调用`interrupt()`，`join()`方法会立刻抛出`InterruptedException`，因此，目标线程只要捕获到`join()`方法抛出的`InterruptedException`，就说明有其他线程对其调用了`interrupt()`方法，通常情况下该线程应该立刻结束运行。
 
+某线程被interrupted时, 它恰好在wait,sleep,occupied, 它就会抛出异常, isInterrupted() 也就不会被正常置为false,
+
+ while循环就不能正常中止, 就只能靠break中止. 
+
 ### Volatile
 
 线程间共享变量需要使用`volatile`关键字标记，确保每个线程都能读取到更新后的变量值。
@@ -102,3 +106,19 @@ Thread.setPriority(int n) // 1~10, 默认值5
 通过标志位判断需要正确使用`volatile`关键字
 
 `volatile`关键字解决了共享变量在线程间的可见性问题。
+
+### 守护线程
+
+Java程序入口就是由JVM启动`main`线程，`main`线程又可以启动其他线程。当所有线程都运行结束时，JVM退出，进程结束。
+
+守护线程是指为其他线程服务的线程。在JVM中，所有非守护线程都执行完毕后，无论有没有守护线程，虚拟机都会自动退出。
+
+如何创建守护线程呢？方法和普通线程一样，只是在调用`start()`方法前，调用`setDaemon(true)`把该线程标记为守护线程：
+
+```java
+Thread t = new MyThread();
+t.setDaemon(true);
+t.start();
+```
+
+在守护线程中，编写代码要注意：守护线程不能持有任何需要关闭的资源，例如打开文件等，因为虚拟机退出时，守护线程没有任何机会来关闭文件，这会导致数据丢失。
