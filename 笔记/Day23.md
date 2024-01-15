@@ -179,3 +179,146 @@ Java的线程锁是可重入的锁。
 ### wait&notify
 
 在Java程序中，`synchronized`解决了多线程竞争的问题，但是`synchronized`并没有解决多线程协调的问题。
+
+因此，多线程协调运行的原则就是：当条件不满足时，线程进入等待状态；当条件满足时，线程被唤醒，继续执行任务。
+
+`wait()`方法必须在当前获取的锁对象上调用，这里获取的是`this`锁，因此调用`this.wait()`。
+
+`wait()`方法的执行机制非常复杂。首先，它不是一个普通的Java方法，而是定义在`Object`类的一个`native`方法，也就是由JVM的C代码实现的。其次，必须在`synchronized`块中才能调用`wait()`方法，因为`wait()`方法调用时，**会*释放*线程获得的锁**，`wait()`**方法返回后，线程又会重新试图获得锁**。因此，只能在锁对象上调用`wait()`方法。
+
+如何让等待的线程被重新唤醒，然后从`wait()`方法返回？答案是在相同的锁对象上调用`notify()`方法。
+
+注意到在往队列中添加了任务后，线程立刻对`this`锁对象调用`notify()`方法，这个方法会唤醒一个正在`this`锁等待的线程（就是在`getTask()`中位于`this.wait()`的线程），从而使得等待线程从`this.wait()`方法返回。
+
+### 小结
+
+`wait`和`notify`用于多线程协调运行：
+
+- 在`synchronized`内部可以调用`wait()`使线程进入等待状态；
+- 必须在已获得的锁对象上调用`wait()`方法；
+- 在`synchronized`内部可以调用`notify()`或`notifyAll()`唤醒其他等待线程；
+- 必须在已获得的锁对象上调用`notify()`或`notifyAll()`方法；
+- 已唤醒的线程还需要重新获得锁后才能继续执行。
+
+
+
+### ReentrantLock
+
+Java语言直接提供了`synchronized`关键字用于加锁，但这种锁一是很重，二是获取时必须一直等待，没有额外的尝试机制。
+
+`java.util.concurrent.locks`包提供的`ReentrantLock`用于替代`synchronized`加锁，我们来看一下传统的`synchronized`代码：
+
+```java
+public class Counter {
+    private final Lock lock = new ReentrantLock();
+    private int count;
+
+    public void add(int n) {
+        lock.lock();
+        try {
+            count += n;
+        } finally {
+            lock.unlock();
+        }
+    }
+}
+```
+
+`ReentrantLock`是Java代码实现的锁，我们就必须先获取锁，然后在`finally`中正确释放锁。
+
+`ReentrantLock`是可重入锁，它和`synchronized`一样，一个线程可以多次获取同一个锁.
+
+和`synchronized`不同的是，`ReentrantLock`可以尝试获取锁：
+
+```java
+if (lock.tryLock(1, TimeUnit.SECONDS)) {
+    try {
+        ...
+    } finally {
+        lock.unlock();
+    }
+}
+```
+
+上述代码在尝试获取锁的时候，最多等待1秒。如果1秒后仍未获取到锁，`tryLock()`返回`false`，程序就可以做一些额外处理，而不是无限等待下去。
+
+所以，使用`ReentrantLock`比直接使用`synchronized`更安全，线程在`tryLock()`失败的时候不会导致死锁。
+
+`synchronized`可以配合`wait`和`notify`实现线程在条件不满足时等待，条件满足时唤醒，用`ReentrantLock`我们怎么编写`wait`和`notify`的功能呢？
+
+答案是使用`Condition`对象来实现`wait`和`notify`的功能。
+
+`Condition`提供的`await()`、`signal()`、`signalAll()`原理和`synchronized`锁对象的`wait()`、`notify()`、`notifyAll()`是一致的，并且其行为也是一样的：
+
+- `await()`会释放当前锁，进入等待状态；
+- `signal()`会唤醒某个等待线程；
+- `signalAll()`会唤醒所有等待线程；
+- 唤醒线程从`await()`返回后需要重新获得锁。
+
+此外，和`tryLock()`类似，`await()`可以在等待指定时间后，如果还没有被其他线程通过`signal()`或`signalAll()`唤醒，可以自己醒来：
+
+```java
+if (condition.await(1, TimeUnit.SECOND)) {
+    // 被其他线程唤醒
+} else {
+    // 指定时间内没有被其他线程唤醒
+}
+```
+
+
+
+### ReadWriteLock
+
+使用`ReadWriteLock`可以解决这个问题，它保证：
+
+- 只允许一个线程写入（其他线程既不能写入也不能读取）；
+- 没有写入时，多个线程允许同时读（提高性能）。
+
+用`ReadWriteLock`实现这个功能十分容易。我们需要创建一个`ReadWriteLock`实例，然后分别获取读锁和写锁：
+
+```java
+private final ReadWriteLock rwlock = new ReentrantReadWriteLock();
+private final Lock rlock = rwlock.readLock();
+private final Lock wlock = rwlock.writeLock();
+
+wlock.lock(); // 加写锁
+wlock.unlock(); // 释放写锁
+rlock.lock(); // 加读锁
+rlock.unlock(); // 释放读锁
+```
+
+使用`ReadWriteLock`时，适用条件是同一个数据，有大量线程读取，但仅有少数线程修改。
+
+
+
+### StampedLock
+
+如果我们深入分析`ReadWriteLock`，会发现它有个潜在的问题：如果有线程正在读，写线程需要等待读线程释放锁后才能获取写锁，即读的过程中不允许写，这是一种悲观的读锁。
+
+要进一步提升并发执行效率，Java 8引入了新的读写锁：`StampedLock`。
+
+`StampedLock`和`ReadWriteLock`相比，改进之处在于：读的过程中也允许获取写锁后写入！这样一来，我们读的数据就可能不一致，所以，需要一点额外的代码来判断读的过程中是否有写入，这种读锁是一种乐观锁。
+
+乐观锁的意思就是乐观地估计读的过程中大概率不会有写入，因此被称为乐观锁。反过来，悲观锁则是读的过程中拒绝有写入，也就是写入必须等待。显然乐观锁的并发效率更高，但一旦有小概率的写入导致读取的数据不一致，需要能检测出来，再读一遍就行。
+
+`StampedLock`把读锁细分为乐观读和悲观读，能进一步提升并发效率。但这也是有代价的：一是代码更加复杂，二是`StampedLock`是不可重入锁，不能在一个线程中反复获取同一个锁。
+
+`StampedLock`还提供了更复杂的将悲观读锁升级为写锁的功能，它主要使用在if-then-update的场景：即先读，如果读的数据满足条件，就返回，如果读的数据不满足条件，再尝试写。
+
+### 小结
+
+`StampedLock`提供了乐观读锁，可取代`ReadWriteLock`以进一步提升并发性能；
+
+`StampedLock`是不可重入锁。
+
+
+
+### Semaphore
+
+各种锁的实现，本质上锁的目的是保护一种受限资源，保证同一时刻只有一个线程能访问（ReentrantLock），或者只有一个线程能写入（ReadWriteLock）。
+
+还有一种受限资源，它需要保证同一时刻最多有N个线程能访问，比如同一时刻最多创建100个数据库连接，最多允许10个用户下载等。
+
+这种限制数量的锁，如果用Lock数组来实现，就太麻烦了。
+
+这种情况就可以使用`Semaphore`
