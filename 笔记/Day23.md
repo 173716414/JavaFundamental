@@ -332,3 +332,71 @@ rlock.unlock(); // 释放读锁
 ### 小结
 
 如果要对某一受限资源进行限流访问，可以使用`Semaphore`，保证同一时间最多N个线程访问受限资源。
+
+
+
+### Concurrent集合
+
+`BlockingQueue`的意思就是说，当一个线程调用这个`TaskQueue`的`getTask()`方法时，该方法内部可能会让线程变成等待状态，直到队列条件满足不为空，线程被唤醒后，`getTask()`方法才会返回。
+
+因为`BlockingQueue`非常有用，所以我们不必自己编写，可以直接使用Java标准库的`java.util.concurrent`包提供的线程安全的集合：`ArrayBlockingQueue`。
+
+| interface | non-thread-safe         | thread-safe                              |
+| :-------- | :---------------------- | :--------------------------------------- |
+| List      | ArrayList               | CopyOnWriteArrayList                     |
+| Map       | HashMap                 | ConcurrentHashMap                        |
+| Set       | HashSet / TreeSet       | CopyOnWriteArraySet                      |
+| Queue     | ArrayDeque / LinkedList | ArrayBlockingQueue / LinkedBlockingQueue |
+| Deque     | ArrayDeque / LinkedList | LinkedBlockingDeque                      |
+
+因为所有的同步和加锁的逻辑都在集合内部实现，对外部调用者来说，只需要正常按接口引用，其他代码和原来的非线程安全代码完全一样。即当我们需要多线程访问时，把：
+
+```
+Map<String, String> map = new HashMap<>();
+```
+
+改为：
+
+```
+Map<String, String> map = new ConcurrentHashMap<>();
+```
+
+就可以了。
+
+
+
+### Atomic
+
+我们以`AtomicInteger`为例，它提供的主要操作有：
+
+- 增加值并返回新值：`int addAndGet(int delta)`
+- 加1后返回新值：`int incrementAndGet()`
+- 获取当前值：`int get()`
+- 用CAS方式设置：`int compareAndSet(int expect, int update)`
+
+Atomic类是通过无锁（lock-free）的方式实现的线程安全（thread-safe）访问。它的主要原理是利用了CAS：Compare and Set。
+
+```java
+public final boolean compareAndSet(expectedValue, newValue)
+```
+
+该方法接受两个参数：`expectedValue`和`newValue`。它会将当前的值与`expectedValue`进行比较，如果相等，则将值更新为`newValue`，并返回`true`；如果不相等，则不进行更新，并返回`false`。
+
+我们利用`AtomicLong`可以编写一个多线程安全的全局唯一ID生成器：
+
+```java
+class IdGenerator {
+    AtomicLong var = new AtomicLong(0);
+
+    public long getNextId() {
+        return var.incrementAndGet();
+    }
+}
+```
+
+### 小结
+
+使用`java.util.concurrent.atomic`提供的原子操作可以简化多线程编程：
+
+- 原子操作实现了无锁的线程安全；
+- 适用于计数器，累加器等。
