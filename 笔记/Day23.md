@@ -133,3 +133,49 @@ public synchronized void add(int n) { // 锁住this
 ```
 
 因此，用`synchronized`修饰的方法就是同步方法，它表示整个方法都必须用`this`实例加锁。
+
+```java
+public synchronized static void test(int n) {
+    ...
+}
+```
+
+对于`static`方法，是没有`this`实例的，因为`static`方法是针对类而不是实例。但是我们注意到任何一个类都有一个由JVM自动创建的`Class`实例，因此，对`static`方法添加`synchronized`，锁住的是该类的`Class`实例。上述`synchronized static`方法实际上相当于：
+
+```java
+public class Counter {
+    public static void test(int n) {
+        synchronized(Counter.class) {
+            ...
+        }
+    }
+}
+```
+
+
+
+### 死锁
+
+Java的线程锁是可重入的锁。
+
+对同一个线程，能否在获取到锁以后继续获取同一个锁？
+
+答案是肯定的。JVM允许同一个线程重复获取同一个锁，这种能被同一个线程反复获取的锁，就叫做可重入锁。
+
+由于Java的线程锁是可重入锁，所以，获取锁的时候，不但要判断是否是第一次获取，还要记录这是第几次获取。每获取一次锁，记录+1，每退出`synchronized`块，记录-1，减到0的时候，才会真正释放锁。
+
+在获取多个锁的时候，不同线程获取多个不同对象的锁可能导致死锁。
+
+死锁产生的条件是多线程各自持有不同的锁，并互相试图获取对方已持有的锁，导致无限等待。
+
+死锁发生后，没有任何机制能解除死锁，只能强制结束JVM进程。
+
+因此，在编写多线程应用时，要特别注意防止死锁。因为死锁一旦形成，就只能强制结束进程。
+
+那么我们应该如何避免死锁呢？答案是：线程获取锁的顺序要一致。
+
+
+
+### wait&notify
+
+在Java程序中，`synchronized`解决了多线程竞争的问题，但是`synchronized`并没有解决多线程协调的问题。
